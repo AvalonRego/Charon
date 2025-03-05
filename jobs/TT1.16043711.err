@@ -1,0 +1,9 @@
+ Hint: Loaded cuda/12.1 but please note that no NVIDIA driver is installed on this machine.
+Loading jax/0.4.13
+  Loading requirement: cudnn/8.9.0
+Traceback (most recent call last):
+  File "/u/arego/project/Stuff_For_Thesis/triggerdata.py", line 57, in <module>
+    file_list = [os.path.join(path,file) for file in os.listdir(path) if file.endswith('.h5')]
+FileNotFoundError: [Errno 2] No such file or directory: '/viper/ptmp1/arego/RT6K/'
+srun: error: ravc4041: task 0: Exited with exit code 1
+srun: Terminating StepId=16043711.0
