@@ -13,16 +13,58 @@ import pandas as pd
 # Set logging level to INFO
 logging.getLogger().setLevel(logging.INFO)
 
+
+def initialize_and_load_data(data_path: str, trigger_interval: int = 10):
+    """
+    Initialize the Collection object and load hit data.
+    
+    Args:
+        data_path (str): Path to the HDF5 storage file.
+        trigger_interval (int): Interval for binning time data.
+    
+    Returns:
+        Tuple: (hits_data, timer_bins, time_intervals)
+    """
+    logging.debug('Initializing Collections and Loading Data')
+    start = time.time()
+    
+    # Initialize Collection
+    config = HDF5StorageConfiguration(data_path=data_path)
+    collection = Collection(config)
+
+    with collection:
+        # Load only required columns
+        hits_data = collection.storage.get_hits().df
+
+    # Optimize time normalization using map()
+    min_time_per_record = hits_data.groupby("record_id")["time"].min().to_dict()
+    hits_data["time"] -= hits_data["record_id"].map(min_time_per_record)
+
+    # Optimized min/max calculation
+    time_values = hits_data["time"].values
+    lower_limit = np.min(time_values)
+    upper_limit = np.max(time_values)
+
+    # Efficient bin calculation
+    num_bins = int((upper_limit - lower_limit) / trigger_interval) + 1
+    timer_bins = np.linspace(lower_limit, upper_limit, num_bins)
+    time_intervals = (timer_bins[:-1] + timer_bins[1:]) * 0.5
+
+    end = time.time() - start
+    logging.info(f'Initialization and data loading took {end:.2f}s')
+
+    return hits_data, timer_bins, time_intervals
+
 def initialize_collection(data_path: str):
     """Initialize and return the Collection object."""
-    logging.info('Initializing Collections')
+    logging.debug('Initializing Collections')
     config = HDF5StorageConfiguration(data_path=data_path, read_only=False)
     collection = Collection(config)
     return collection
 
 def load_data(collection, trigger_interval: int = 10):
     """Load hit and source data from the collection."""
-    logging.info('Loading Data')
+    logging.debug('Loading Data')
     start=time.time()
     collection.open()
     hits_data = collection.storage.get_hits()  # Fetch hits from the collection
@@ -33,7 +75,7 @@ def load_data(collection, trigger_interval: int = 10):
     timer_bins = np.arange(lower_limit, upper_limit + trigger_interval, trigger_interval)
     time_intervals = (timer_bins[1:] + timer_bins[:-1]) / 2
     end=time.time()-start
-    logging.info(f'it took {end}s to load data')
+    logging.debug(f'it took {end}s to load data')
     return hits_data, timer_bins, time_intervals
 
 def concatenate_arrays(array_list):
@@ -48,7 +90,7 @@ def sum_arrays(array_list):
 
 def process_hits(hits_data, timer_bins):
     """Process hits data and return aggregated results."""
-    logging.info("Started Processing Hits")
+    logging.debug("Started Processing Hits")
     #Grouping by multiple fields
     if isinstance(hits_data, pd.DataFrame):
         grouped_data = hits_data.groupby(['record_id', 'string_id', 'module_id', 'pmt_id'])['time'] \
@@ -79,7 +121,7 @@ def process_hits(hits_data, timer_bins):
     for i in range(grouped_data.shape[0]):
         count_array[i] = np.histogram(grouped_data['time'][i], bins=timer_bins)[0].astype(int)
         pmt_activation_array[i] = np.where(count_array[i] > 0, 1, 0)
-    logging.info(f'Histogram creation time: {time.time() - start_time:.2f}s')
+    logging.debug(f'Histogram creation time: {time.time() - start_time:.2f}s')
 
     # Assign counts and activations to the DataFrame
     grouped_data['counts'] = [count_array[i] for i in range(count_array.shape[0])]
@@ -95,26 +137,26 @@ def process_hits(hits_data, timer_bins):
         })
         .reset_index()
     )
-    logging.info("Finished Processing Hits")
+    logging.debug("Finished Processing Hits")
     return aggregated_data
 
 def create_trigger_data(aggregated_data):
     start=time.time()
     """Create results DataFrame with necessary calculations.
     TS: time series"""
-    logging.info("Creating Results df")
+    logging.debug("Creating Results df")
     trigger_data = aggregated_data[['record_id', 'string_id', 'module_id']].copy()
     for threshold in range(16):
         trigger_data[f'Mod Count CL: {threshold}'] = aggregated_data['pmt_activation'].apply(lambda x: np.where(x > threshold, 1, 0))
         trigger_data[f'Mod Hit Count CL: {threshold}'] = trigger_data[f'Mod Count CL: {threshold}'] * aggregated_data['counts']
         trigger_data[f'TS CL: {threshold}'] = aggregated_data[trigger_data[f'Mod Count CL: {threshold}'].apply(np.sum) > 0]['time']
         trigger_data[f'TS CL: {threshold}'] = trigger_data[f'TS CL: {threshold}'].apply(lambda times: np.where(np.isnan(times), np.array([0]), times))
-    logging.info(f'Created Results df and took {time.time()-start}s')
+    logging.debug(f'Created Results df and took {time.time()-start}s')
     return trigger_data
 
 def aggregate_for_plotting(trigger_data):
     """Prepare the data for plotting by aggregating necessary columns."""
-    logging.info('Generating plotable results')
+    logging.debug('Generating plotable results')
     start=time.time()
     aggregation_dict_a = {col: sum_arrays for col in trigger_data.columns if col.startswith('Mod') or col.startswith('TS')}
     aggregation_dict_b = {col: concatenate_arrays for col in trigger_data.columns if col.startswith('TS')}
@@ -125,13 +167,13 @@ def aggregate_for_plotting(trigger_data):
         .agg(combined_aggregation_dict)
         .reset_index()
     )
-    logging.info(f'Generated plotable data and took {time.time()-start} s')
+    logging.debug(f'Generated plotable data and took {time.time()-start} s')
     return plotable_trigger_data
 
 def plot_results(plotable_trigger_data, time_intervals, CL, num_plots=None):
     """Plot the results for each record."""
     for idx,record_id in enumerate(plotable_trigger_data['record_id']):
-        logging.info(f'Plotting results for record: {record_id}')
+        logging.debug(f'Plotting results for record: {record_id}')
         record_data = plotable_trigger_data[plotable_trigger_data['record_id'] == record_id][[f'Mod Count CL: {CL}', f'Mod Hit Count CL: {CL}', f'TS CL: {CL}']]
         
         plt.figure().set_figwidth(15)
@@ -181,7 +223,7 @@ def save_dataframe(df, path, format="arrow"):
     start=time.time()
     path=path.split('.')[0]
     path=f'{path}.{format}'
-    logging.info(f'saving {path}')
+    logging.debug(f'saving {path}')
     table = pa.Table.from_pandas(df)
     if format == "parquet":
         pq.write_table(table, path)
@@ -194,7 +236,7 @@ def save_dataframe(df, path, format="arrow"):
             writer.write(table)
     else:
         raise ValueError("Unsupported format. Choose 'parquet' or 'feather'.")
-    logging.info(f'saved {path} in {time.time()-start} s')
+    logging.debug(f'saved {path} in {time.time()-start} s')
 
 def load_dataframe(path, format="arrow"):
     """
