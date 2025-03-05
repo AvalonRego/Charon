@@ -31,10 +31,10 @@ def process_directory(directory, num_workers=8):
 
 if __name__=="__main__":
 # Example usage
-    directory = "/viper/ptmp1/arego/LargeTracks/"
+    directory = "/viper/ptmp/arego/R1T4K/"
     merged_array = process_directory(directory, num_workers=16)
     
-    np.save("EvH_LT.npz",merged_array)
+    np.save("EvHRT_.npz",merged_array)
     
 
     print("Final Merged Shape:", merged_array.shape)  # Should be (N, 2), where N is the total rows across files

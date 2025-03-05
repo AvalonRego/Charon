@@ -1,0 +1,28 @@
+                                  
+================================= 
+Global information about the job: 
+================================= 
+  
+Job owner: arego(54817)
+Job name:  Plot
+Node list: vipc2096
+Job start: Tue Mar  4 17:50:44 CET 2025
+Job end:   Tue Mar  4 20:00:51 CET 2025
+Work dir:  /u/arego/Project/Thesis/./
+Command:   /viper/u1/arego/Project/Thesis/HE.sh
+  
+  
+  
+==========================================================================================
+Information on jobsteps (Note: MaxRSS/AveRSS is the maximum/average over all 
+tasks of the per-task memory high-water marks; cf. "man sacct"): 
+==========================================================================================
+  
+JobID            JobName NNodes NTasks  NCPUS       MaxRSS       AveRSS    Elapsed ExitCode
+------------- ---------- ------ ------ ------ ------------ ------------ ---------- --------
+1232893             Plot      1            32                             02:10:07      0:0
+1232893.0        python3      1      1     32   112422.77M   112422.77M   02:10:06    0:125
+  
+Maximum memory per node: 117.883814 GB (defined as MaxRSS*Ntasks/NNodes)
+CPU utilization: 10.4 %
+  

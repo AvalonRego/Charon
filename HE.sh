@@ -2,8 +2,8 @@
 #
 # Python multiprocessing example job script for MPCDF Raven.
 #
-#SBATCH -o ./out.%j
-#SBATCH -e ./err.%j
+#SBATCH -o ./Logs/out.%j
+#SBATCH -e ./Logs/err.%j
 #SBATCH -D ./
 #SBATCH -J Plot
 #SBATCH --nodes=1             # request a full node
@@ -21,4 +21,4 @@ export OMP_NUM_THREADS=1
 
 # Use the environment variable SLURM_CPUS_PER_TASK to have multiprocessing
 # spawn exactly as many processes as you have CPUs available.
-srun python3 /u/arego/project/Stuff_For_Thesis/HitvEnergy.py
+srun python3 /u/arego/Project/Thesis/HitvEnergy.py
