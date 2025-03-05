@@ -1,0 +1,29 @@
+job finished
+                                  
+================================= 
+Global information about the job: 
+================================= 
+  
+Job owner: arego(54817)
+Job name:  TT
+Node list: ravc4041
+Job start: Wed Mar  5 19:47:48 CET 2025
+Job end:   Wed Mar  5 19:48:20 CET 2025
+Work dir:  /u/arego/project/Stuff_For_Thesis/./
+Command:   /raven/u/arego/project/Stuff_For_Thesis/TD.sh
+  
+  
+  
+==========================================================================================
+Information on jobsteps (Note: MaxRSS/AveRSS is the maximum/average over all 
+tasks of the per-task memory high-water marks; cf. "man sacct"): 
+==========================================================================================
+  
+JobID            JobName NNodes NTasks  NCPUS       MaxRSS       AveRSS    Elapsed ExitCode
+------------- ---------- ------ ------ ------ ------------ ------------ ---------- --------
+16043711              TT      1            32                             00:00:32      0:0
+16043711.0       python3      1      1     32        1.47M        1.47M   00:00:25      1:0
+  
+Maximum memory per node: 0.001540 GB (defined as MaxRSS*Ntasks/NNodes)
+CPU utilization: 0.0 %
+  
