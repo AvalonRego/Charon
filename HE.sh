@@ -9,8 +9,8 @@
 #SBATCH --nodes=1             # request a full node
 #SBATCH --ntasks-per-node=1   # only start 1 task via srun because Python multiprocessing starts more tasks internally
 #SBATCH --cpus-per-task=16    # assign all the cores to that first task to make room for Python's multiprocessing tasks
-#SBATCH --time=02:10:00
-#SBATCH --mem=120000
+#SBATCH --time=20:10:00
+#SBATCH --mem=240000
 #SBATCH --mail-type=all
 #SBATCH --mail-user=arego@mpcdf.mpg.de
 

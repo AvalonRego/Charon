@@ -7398,3 +7398,31 @@ Error processing /viper/ptmp/arego/RC4K1/1567.h5: [Errno 122] Disk quota exceede
 Error processing /viper/ptmp/arego/RC4K1/12387.h5: [Errno 122] Disk quota exceeded: 'processed_data/12387.npy'
 Error processing /viper/ptmp/arego/RC4K1/16353.h5: [Errno 122] Disk quota exceeded: 'processed_data/16353.npy'
 Error processing /viper/ptmp/arego/RC4K1/2574.h5: [Errno 122] Disk quota exceeded: 'processed_data/2574.npy'
+                                  
+================================= 
+Global information about the job: 
+================================= 
+  
+Job owner: arego(54817)
+Job name:  Plot
+Node list: vipc2045
+Job start: Thu Mar  6 12:02:27 CET 2025
+Job end:   Thu Mar  6 14:01:59 CET 2025
+Work dir:  /u/arego/Project/Thesis/./
+Command:   /viper/u1/arego/Project/Thesis/HE.sh
+  
+  
+  
+==========================================================================================
+Information on jobsteps (Note: MaxRSS/AveRSS is the maximum/average over all 
+tasks of the per-task memory high-water marks; cf. "man sacct"): 
+==========================================================================================
+  
+JobID            JobName NNodes NTasks  NCPUS       MaxRSS       AveRSS    Elapsed ExitCode
+------------- ---------- ------ ------ ------ ------------ ------------ ---------- --------
+1237669             Plot      1            32                             01:59:32      0:0
+1237669.0        python3      1      1     32   106379.28M   106379.28M   01:59:32     0:15
+  
+Maximum memory per node: 111.546759 GB (defined as MaxRSS*Ntasks/NNodes)
+CPU utilization: 95.3 %
+  
