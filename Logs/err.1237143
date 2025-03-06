@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/u/arego/Project/Thesis/HitC.py", line 31, in <module>
+srun: error: vipc2277: task 0: Exited with exit code 1
+srun: Terminating StepId=1237143.0
+    merged_array = process_directory(directory, num_workers=16)
+  File "/u/arego/Project/Thesis/HitC.py", line 23, in process_directory
+    with multiprocessing.Pool(processes=min(num_workers, len(h5_files))) as pool:
+  File "/mpcdf/soft/RHEL_9/packages/x86_64/anaconda/3/2023.03/lib/python3.10/multiprocessing/context.py", line 119, in Pool
+    return Pool(processes, initializer, initargs, maxtasksperchild,
+  File "/mpcdf/soft/RHEL_9/packages/x86_64/anaconda/3/2023.03/lib/python3.10/multiprocessing/pool.py", line 205, in __init__
+    raise ValueError("Number of processes must be at least 1")
+ValueError: Number of processes must be at least 1

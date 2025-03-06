@@ -11,6 +11,8 @@
 #SBATCH --cpus-per-task=16    # assign all the cores to that first task to make room for Python's multiprocessing tasks
 #SBATCH --time=02:10:00
 #SBATCH --mem=120000
+#SBATCH --mail-type=all
+#SBATCH --mail-user=arego@mpcdf.mpg.de
 
 module purge
 module load anaconda/3/2023.03

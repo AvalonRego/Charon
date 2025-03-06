@@ -1,0 +1,3 @@
+slurmstepd: error: Detected 20 oom_kill events in StepId=1237198.0. Some of the step tasks have been OOM Killed.
+srun: error: vipc2210: task 0: Out Of Memory
+srun: Terminating StepId=1237198.0

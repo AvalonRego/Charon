@@ -1,0 +1,17 @@
+Processing Files:   0%|          | 0/14658 [00:00<?, ?it/s]Processing Files:   0%|          | 0/14658 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "/u/arego/Project/Thesis/HitvEnergy.py", line 51, in <module>
+    process_directory(input_dir, output_dir, num_workers=16)
+  File "/u/arego/Project/Thesis/HitvEnergy.py", line 33, in process_directory
+    for _ in pool.imap_unordered(lambda f: process_file(f, output_dir), h5_files):
+  File "/mpcdf/soft/RHEL_9/packages/x86_64/anaconda/3/2023.03/lib/python3.10/multiprocessing/pool.py", line 873, in next
+    raise value
+  File "/mpcdf/soft/RHEL_9/packages/x86_64/anaconda/3/2023.03/lib/python3.10/multiprocessing/pool.py", line 540, in _handle_tasks
+    put(task)
+  File "/mpcdf/soft/RHEL_9/packages/x86_64/anaconda/3/2023.03/lib/python3.10/multiprocessing/connection.py", line 206, in send
+    self._send_bytes(_ForkingPickler.dumps(obj))
+  File "/mpcdf/soft/RHEL_9/packages/x86_64/anaconda/3/2023.03/lib/python3.10/multiprocessing/reduction.py", line 51, in dumps
+    cls(buf, protocol).dump(obj)
+AttributeError: Can't pickle local object 'process_directory.<locals>.<lambda>'
+srun: error: vipc2045: task 0: Exited with exit code 1
+srun: Terminating StepId=1237662.0

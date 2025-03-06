@@ -1,6 +1,7 @@
 import sys
 import os
-sys.path.append('/u/arego/project/Experimenting/')
+sys.path.append('/u/arego/Project/Experimenting')
+import gc
 
 import Trigger_Improve as ti
 import pandas as pd
@@ -9,12 +10,13 @@ from itertools import combinations
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-OUTPUT_DIR = "/u/arego/project/Stuff_For_Thesis/plot/TD"  # Base directory for storing results
+OUTPUT_DIR = "/u/arego/Project/Thesis/plot/CD"  # Base directory for storing results
 COMPRESSION = "snappy"  # Parquet compression type
 
 def process_file(file_path):
     """Processes a single HDF5 file and saves results as Parquet files in structured directories."""
-    hits_data, timer_bins, time_intervals = ti.initialize_and_load_data(file_path)
+    hits_data, timer_bins, _ = ti.initialize_and_load_data(file_path)
+    del _
     records = pd.read_hdf(file_path, key='records', columns=['record_id', 'energy'])
 
     types = hits_data['type'].unique()
@@ -23,15 +25,18 @@ def process_file(file_path):
     for subset in all_subsets:
         subset_df = hits_data[hits_data["type"].isin(subset)]
         aggregated_data = ti.process_hits(subset_df, timer_bins)
+        del subset_df
         trigger_data = ti.create_trigger_data(aggregated_data)
+        del aggregated_data
         plot_df = ti.aggregate_for_plotting(trigger_data)
+        del trigger_data
 
         cols = [col for col in plot_df.columns if 'Mod' in col]
-        plot_df = plot_df[['record_id'] + cols].apply(np.sum, axis=1)
+        plot_df = plot_df[['record_id'] + cols].applymap(np.sum)
         plot_df = plot_df.merge(records, on='record_id')
 
         # Define output directory based on subset key
-        subset_name = "_".join(subset)  # Convert tuple ('A', 'B') → "A_B"
+        subset_name = "_".join(map(str, subset))# Convert tuple ('A', 'B') → "A_B"
         subset_dir = os.path.join(OUTPUT_DIR, subset_name)
         os.makedirs(subset_dir, exist_ok=True)  # Create directory if not exists
 
@@ -41,18 +46,25 @@ def process_file(file_path):
 
         # Save as Parquet with compression
         plot_df.to_parquet(output_path, index=False, compression=COMPRESSION)
+        del plot_df
+        gc.collect()
 
 
-def process_files_in_parallel(file_paths, num_workers=8):
+def process_files_in_parallel(file_paths, num_workers=4):
     """Processes multiple HDF5 files in parallel using Joblib and tqdm."""
     Parallel(n_jobs=num_workers)(
         delayed(process_file)(file) for file in tqdm(file_paths, desc="Processing Files", unit="file")
     )
 
+if __name__=='__main__':
+    # Example usage
+    path='/viper/ptmp/arego/RC4K1/'
+    file_paths = [os.path.join(path, file) for file in os.listdir(path) if file.endswith('.h5')]
 
+    # Filter files by size < 1GB
+    file_paths = [(file, os.path.getsize(file)) for file in file_paths if os.path.getsize(file) < 10**9]
 
+    # Sort files by size (small to big)
+    file_paths = [file for file, size in sorted(file_paths, key=lambda x: x[1])]
 
-# Example usage
-path='/viper/ptmp1/arego/RT6K/'
-file_list = [os.path.join(path,file) for file in os.listdir(path) if file.endswith('.h5')]
-results = process_files_in_parallel(file_list[:100], num_workers=16)  # Adjust workers as needed
+    results = process_files_in_parallel(file_paths, num_workers=8)  # Adjust workers as needed
