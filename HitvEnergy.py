@@ -101,10 +101,13 @@ if __name__ == "__main__":
     # input_dir = "/viper/ptmp/arego/R1T4K/"
     # output_dir = "/u/arego/Project/Thesis/plot/R1T4K_HvE"
     # merged_file = "EvHRT.npy"
-    input_dir = "/viper/ptmp/arego/RC4K1/"
-    output_dir = "/u/arego/Project/Thesis/plot/RC4K1_HvE"
-    merged_file = "EvHRC.npy"
-    
+    #input_dir = "/viper/ptmp/arego/RC4K1/"
+    #output_dir = "/u/arego/Project/Thesis/plot/RC4K1_HvE"
+    #merged_file = "EvHRC.npy"
+    input_dir = "/viper/ptmp/arego/TMerge/"
+    output_dir = "/u/arego/Project/Thesis/plot/TM100K_HvE"
+    merged_file = "EvHTM.npy"
+    print(input)
     # Process .h5 files, merge in batches, and create final merged file
     process_directory(input_dir, output_dir, num_workers=16, batch_size=1000)
     merge_results(output_dir, merged_file)

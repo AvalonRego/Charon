@@ -9,7 +9,7 @@ from itertools import combinations
 from joblib import Parallel, delayed
 from tqdm import tqdm
 
-OUTPUT_DIR = "/u/arego/Project/Thesis/plot/CD4K"  # Base directory for storing results
+OUTPUT_DIR = "/u/arego/Project/Thesis/plot/TD4K"  # Base directory for storing results
 COMPRESSION = "snappy"  # Parquet compression type
 
 def process_file(i, file_path):
@@ -82,7 +82,8 @@ def process_files_in_parallel(file_paths, num_workers=4):
 
 if __name__ == '__main__':
     #path = '/viper/ptmp/arego/TMerge/'
-    path = '/viper/ptmp/arego/RC4K1/'
+    #path = '/viper/ptmp/arego/RC4K1/'
+    path = '/viper/ptmp/arego/R1T4K/'
     print(path)
     file_paths = [os.path.join(path, file) for file in os.listdir(path) if file.endswith('.h5')]
 

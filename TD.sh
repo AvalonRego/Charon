@@ -23,6 +23,6 @@ module load gcc/13
 source /viper/u/arego/Project/olympus/bin/activate
 
 # Run the Python script
-srun python3 /u/arego/Project/Thesis/triggerdata.py"${@}"
+srun python3 /u/arego/Project/Thesis/triggerdata1.py"${@}"
 
 echo "job finished"
